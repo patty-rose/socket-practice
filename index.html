@@ -13,10 +13,13 @@
       #messages { list-style-type: none; margin: 0; padding: 0; }
       #messages > li { padding: 0.5rem 1rem; }
       #messages > li:nth-child(odd) { background: #efefef; }
+
+      #userTyping { position: fixed; bottom: 2rem; left: 6rem; }
     </style>
   </head>
   <body>
     <ul id="messages"></ul>
+    <p id="userTyping"></p>
     <form id="form" action="">
       <input id="input" autocomplete="off" /><button>Send</button>
     </form>
@@ -29,8 +32,19 @@
       var form = document.getElementById('form');
       var input = document.getElementById('input');
 
+      form.addEventListener('input', function(e) {
+        e.preventDefault();
+        if (input.value) {
+          socket.emit('user typing', "someone is typing..");
+        }
+        else if (!input.value){
+          document.getElementById("userTyping").innerHTML = "";
+        }
+      });
+
       form.addEventListener('submit', function(e) {
         e.preventDefault();
+        document.getElementById("userTyping").innerHTML = "";
         if (input.value) {
           socket.emit('chat message', input.value);
           input.value = '';
@@ -43,6 +57,10 @@
         item.textContent = msg;
         messages.appendChild(item);
         window.scrollTo(0, document.body.scrollHeight);
+      });
+
+      socket.on('user typing', function(msg) {
+        document.getElementById("userTyping").innerHTML = msg;
       });
     </script>
 
