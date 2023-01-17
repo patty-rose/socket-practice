@@ -15,8 +15,10 @@ app.get('/', (req, res) => {//We define a route handler / that gets called when 
 io.on('connection', (socket) => {
   console.log('a user connected');
   socket.on('chat message', (msg) => {
-    console.log('message: ' + msg);
     io.emit('chat message', msg);
+  });
+  socket.on('user typing', (msg) => {
+    io.emit('user typing', msg);
   });
   socket.on('disconnect', () => {
     console.log('user disconnected');
